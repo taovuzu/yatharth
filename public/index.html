@@ -28,8 +28,12 @@
         animation: spin 1s linear infinite;
       }
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
       .editor-container {
         background-color: #1f2937; /* bg-gray-800 */
@@ -60,7 +64,15 @@
       }
       /* C++ Editor: Fixed Height & Scrollable */
       #cpp-editor-container {
-        height: 450px; 
+        height: 450px;
+      }
+      /* Add this new class definition */
+      .editor-container-focused {
+        border-color: #3b82f6; /* A bright blue for highlighting */
+      }
+      /* Add this new rule to disable the default focus outline on the code element */
+      .code-editor code:focus {
+        outline: none;
       }
       /* JS Editor: Dynamic Height */
       #js-editor-container {
@@ -114,25 +126,25 @@
           C++ to Javascript Converter
         </h1>
         <p class="text-gray-400 mt-4 max-w-2xl mx-auto">
-          Instantly convert C++ code to Javascript. This converter helps you learn the nuances of Javascript by providing equivalent code and explanations.
+          Instantly convert C++ code to Javascript. This converter helps you
+          learn the nuances of Javascript by providing equivalent code and
+          explanations.
         </p>
       </div>
 
       <!-- Stacked Layout -->
       <div class="space-y-8">
         <!-- Row 1: C++ Editor -->
-          <div class="editor-header">
-            <span>C++ Code</span>
-          </div>
-        <div id="cpp-editor-container" class="editor-container">        
+        <div class="editor-header">
+          <span>C++ Code</span>
+        </div>
+        <div id="cpp-editor-container" class="editor-container">
           <div class="code-editor">
             <pre><code id="cpp-input" contenteditable="true" class="language-cpp">// Paste your C++ code here...
 #include <iostream>
 #include <vector>
 #include <string>
 
-// This is a sample C++ code snippet.
-// You can replace it with your own code.
 void greet(std::vector<std::string> names) {
     for (const std::string& name : names) {
         std::cout << "Hello, " << name << "!" << std::endl;
@@ -179,17 +191,17 @@ int main() {
           <div class="editor-header flex justify-between items-center">
             <span>Javascript</span>
             <button
-                id="copy-button"
-                class="bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded-md text-xs transition-colors duration-200"
+              id="copy-button"
+              class="bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded-md text-xs transition-colors duration-200"
             >
-                Copy
+              Copy
             </button>
           </div>
           <div class="code-editor">
             <pre><code id="js-output" class="language-javascript">// Your converted JavaScript code will appear here...</code></pre>
           </div>
         </div>
-      
+
         <!-- Row 4: Learning Module Section -->
         <div id="interview-qa-section" class="mt-12 hidden">
           <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg">
@@ -227,23 +239,56 @@ int main() {
       const interviewQuestion = document.getElementById("interview-question");
       const interviewAnswer = document.getElementById("interview-answer");
 
-      convertButton.addEventListener("click", handleConversion);
-      copyButton.addEventListener("click", handleCopy);
-      copyButton.addEventListener("click", handleCopy);
+      // === START: All Editor Interaction Logic ===
 
+      let isCppPlaceholderVisible = true;
+      const cppEditorContainer = document.getElementById('cpp-editor-container');
+
+      // Add a 'focus' listener to the code element itself
+      cppInput.addEventListener('focus', () => {
+          // When focused, add the highlight class to the container
+          cppEditorContainer.classList.add('editor-container-focused');
+
+          // Also, clear the placeholder text on the very first focus
+          if (isCppPlaceholderVisible) {
+              cppInput.textContent = ''; 
+              isCppPlaceholderVisible = false; 
+          }
+      });
+
+      // Add a 'blur' listener to the code element
+      cppInput.addEventListener('blur', () => {
+          // When focus is lost, remove the highlight class
+          cppEditorContainer.classList.remove('editor-container-focused');
+      });
+
+      // Keep this listener to allow focusing by clicking the container's padding
+      cppEditorContainer.addEventListener('click', (event) => {
+          // If the click is on the container but not the code itself, focus the code
+          if (event.target === cppEditorContainer) {
+              cppInput.focus();
+          }
+      });
+
+      // Intercept paste to remove formatting AND re-highlight
       cppInput.addEventListener('paste', (event) => {
           event.preventDefault();
-
           const text = (event.clipboardData || window.clipboardData).getData('text/plain');
-
           document.execCommand('insertText', false, text);
-
           setTimeout(() => {
               cppInput.removeAttribute('data-highlighted');
-
               hljs.highlightElement(cppInput);
-          }, 10); 
+          }, 1);
       });
+
+      // === END: All Editor Interaction Logic ===
+
+
+      convertButton.addEventListener("click", handleConversion);
+      copyButton.addEventListener("click", handleCopy);
+
+      
+
       async function handleConversion() {
         const cppCode = cppInput.textContent.trim();
         if (!cppCode) {
@@ -256,7 +301,7 @@ int main() {
         jsOutput.removeAttribute("data-highlighted");
         jsOutput.className = "language-javascript";
         hljs.highlightElement(jsOutput);
-        
+
         interviewQaSection.classList.add("hidden");
 
         try {
@@ -324,7 +369,9 @@ int main() {
 
       function setLoading(isLoading) {
         convertButton.disabled = isLoading;
-        convertButton.querySelector("svg").classList.toggle("hidden", isLoading);
+        convertButton
+          .querySelector("svg")
+          .classList.toggle("hidden", isLoading);
         buttonText.classList.toggle("hidden", isLoading);
         loader.classList.toggle("hidden", !isLoading);
       }

@@ -2,7 +2,6 @@
   "name": "yatharth",
   "version": "1.0.0",
   "description": "A cpp to javascript converter",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",

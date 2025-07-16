@@ -13,6 +13,12 @@
 
 # This rule makes our backend function available at a clean URL.
 [[redirects]]
+  # When the frontend calls any path starting with "/api/",
   from = "/api/*"
-  to = "/.netlify/functions/server/:splat"
+  
+  # **FIX:** This path is now corrected to the standard pattern.
+  # It correctly maps the public API path to the internal function path.
+  to = "/.netlify/functions/server/api/:splat"
+  
+  # The HTTP status code for this internal rewrite. 200 means it's not a redirect.
   status = 200

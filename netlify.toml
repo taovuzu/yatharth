@@ -1,0 +1,19 @@
+# This file should be in the root of your project folder.
+
+[build]
+  # This tells Netlify where to find your serverless function.
+  functions = "netlify/functions"
+  
+  # This tells Netlify which folder contains your frontend files (e.g., index.html).
+  publish = "public"
+
+# This rule makes your backend function available at a clean and simple URL.
+[[redirects]]
+  # When the frontend calls "/api/convert",
+  from = "/api/*"
+  
+  # Netlify will internally forward that request to the actual serverless function.
+  to = "/.netlify/functions/server/api/:splat"
+  
+  # The HTTP status code for this internal rewrite. 200 means it's not a redirect.
+  status = 200

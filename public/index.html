@@ -3,102 +3,75 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <link rel="icon" type="image/x-icon" href="./yatharth.png">
-    <title>C++ to JavaScript Converter</title>
+    <link rel="icon" type="image/x-icon" href="./yatharth.png">
+    <title>Yatharth: C++ to JavaScript Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Syntax Highlighting (highlight.js) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- Markdown Parser (marked.js) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
       body {
         font-family: "Inter", sans-serif;
-        background-color: #111827; /* bg-gray-900 */
+        background-color: #111827;
       }
       .loader {
         border-top-color: #3498db;
         animation: spin 1s linear infinite;
       }
       @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
       .editor-container {
-        background-color: #1f2937; /* bg-gray-800 */
+        background-color: #1f2937;
         border-radius: 0.5rem;
-        border: 1px solid #374151; /* bg-gray-700 */
+        border: 1px solid #374151;
         display: flex;
         flex-direction: column;
         position: relative;
+        transition: border-color 0.2s ease-in-out;
+      }
+      .editor-container-focused {
+        border-color: #3b82f6;
       }
       .editor-header {
-        /* padding: 0.5rem 1rem; */
-        /* background-color: #374151; bg-gray-700 */
-        /* border-bottom: 1px solid #4b5563; bg-gray-600 */
-        font-size: 1.475rem;
-        color: #d1d5db; /* text-gray-300 */
+        padding: 0.5rem 1rem;
+        background-color: #374151;
+        border-bottom: 1px solid #4b5563;
+        font-size: 0.875rem;
+        color: #d1d5db;
       }
       .code-editor {
-        /* padding: 1rem; */
+        padding: 1rem;
         color: #d1d5db;
         outline: none;
         display: flex;
         flex-direction: column;
         overflow-y: auto;
         flex-grow: 1;
-        /* === FIX: Apply font size to the container for inheritance === */
-        font-size: 0.8rem; /* 12.8px */
-        line-height: 1.2;
+        font-size: 0.8rem;
+        line-height: 1.6;
       }
-      /* C++ Editor: Fixed Height & Scrollable */
-      #cpp-editor-container {
-        height: 450px;
-      }
-      /* Add this new class definition */
-      .editor-container-focused {
-        border-color: #3b82f6; /* A bright blue for highlighting */
-      }
-      /* Add this new rule to disable the default focus outline on the code element */
       .code-editor code:focus {
         outline: none;
       }
-      /* JS Editor: Dynamic Height */
-      #js-editor-container {
-        min-height: 200px;
-      }
-      .code-editor pre,
-      .code-editor code {
+      #cpp-editor-container { height: 350px; }
+      #js-editor-container { min-height: 200px; }
+      .code-editor pre, .code-editor code {
         margin: 0;
         padding: 0 !important;
         background-color: transparent !important;
         white-space: pre-wrap;
         word-break: break-all;
         flex-grow: 1;
-        /* Font size is now inherited from the parent .code-editor */
-      }
-      #interview-qa-section pre {
-        background-color: #282c34;
-        padding: 1rem;
-        border-radius: 0.375rem;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-      }
-      #interview-qa-section code {
-        font-family: "Courier New", Courier, monospace;
-        font-size: 0.8rem;
       }
       #interview-qa-section h3 {
         font-size: 1.25rem;
@@ -107,119 +80,55 @@
         margin-bottom: 0.5rem;
         color: #93c5fd;
       }
-      #interview-qa-section ul,
-      #interview-qa-section ol {
-        padding-left: 1.5rem;
-        margin-top: 0.75rem;
-        margin-bottom: 0.75rem;
-      }
-      #interview-qa-section li {
-        margin-bottom: 0.5rem;
-        line-height: 1.6;
-      }
     </style>
   </head>
   <body class="text-white">
-    <div class="w-full max-w-16xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <!-- Header -->
+    <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="text-center mb-10">
         <h1 class="text-4xl md:text-5xl font-bold text-white">
-          C++ to Javascript Converter
+          Yatharth: C++ to Javascript Converter
         </h1>
         <p class="text-gray-400 mt-4 max-w-2xl mx-auto">
-          Instantly convert C++ code to Javascript. This converter helps you
-          learn the nuances of Javascript by providing equivalent code and
-          explanations.
+          Instantly convert C++ code to Javascript and get a detailed lesson on a random, high-value interview topic.
         </p>
       </div>
 
-      <!-- Stacked Layout -->
       <div class="space-y-8">
-        <!-- Row 1: C++ Editor -->
-        <div class="editor-header">
-          <span>C++ Code</span>
-        </div>
         <div id="cpp-editor-container" class="editor-container">
+          <div class="editor-header"><span>C++</span></div>
           <div class="code-editor">
-            <pre><code id="cpp-input" contenteditable="true" class="language-cpp">// Paste your C++ code here...
-#include <iostream>
-#include <vector>
-#include <string>
-
-void greet(std::vector<std::string> names) {
-    for (const std::string& name : names) {
-        std::cout << "Hello, " << name << "!" << std::endl;
-    }
-}
-
-int main() {
-    std::vector<std::string> people = {"Alice", "Bob", "Charlie"};
-    greet(people);
-    return 0;
-}
-</code></pre>
+            <pre><code id="cpp-input" contenteditable="true" class="language-cpp">// Paste your C++ code here...</code></pre>
           </div>
         </div>
 
-        <!-- Row 2: Convert Button -->
         <div class="text-center">
-          <button
-            id="convert-button"
-            class="w-full max-w-xs mx-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-md shadow-lg transition-all transform hover:scale-105 duration-300 ease-in-out flex items-center justify-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z"
-                clip-rule="evenodd"
-              />
-            </svg>
+          <button id="convert-button" class="w-full max-w-xs mx-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-md shadow-lg transition-all transform hover:scale-105 duration-300 ease-in-out flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" /></svg>
             <span id="button-text">Convert</span>
-            <div
-              id="loader"
-              class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-5 w-5 ml-2 hidden"
-            ></div>
+            <div id="loader" class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-5 w-5 ml-2 hidden"></div>
           </button>
         </div>
 
-        <!-- Row 3: JavaScript Editor -->
         <div id="js-editor-container" class="editor-container">
           <div class="editor-header flex justify-between items-center">
             <span>Javascript</span>
-            <button
-              id="copy-button"
-              class="bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded-md text-xs transition-colors duration-200"
-            >
-              Copy
-            </button>
+            <button id="copy-button" class="bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded-md text-xs transition-colors duration-200">Copy</button>
           </div>
           <div class="code-editor">
             <pre><code id="js-output" class="language-javascript">// Your converted JavaScript code will appear here...</code></pre>
           </div>
         </div>
-
-        <!-- Row 4: Learning Module Section -->
+      
         <div id="interview-qa-section" class="mt-12 hidden">
           <div class="bg-gray-800 border border-gray-700 p-6 rounded-lg">
             <div id="interview-question" class="text-gray-300"></div>
             <hr class="my-6 border-gray-600" />
-            <div
-              id="interview-answer"
-              class="text-gray-300 prose prose-invert max-w-none"
-            ></div>
+            <div id="interview-answer" class="text-gray-300 prose prose-invert max-w-none"></div>
           </div>
         </div>
       </div>
 
-      <div
-        id="message-box"
-        class="mt-6 text-center text-green-400 text-sm font-medium hidden"
-      ></div>
+      <div id="message-box" class="mt-6 text-center text-green-400 text-sm font-medium hidden"></div>
     </div>
 
     <script>
@@ -234,44 +143,31 @@ int main() {
       const loader = document.getElementById("loader");
       const buttonText = document.getElementById("button-text");
       const messageBox = document.getElementById("message-box");
-      const interviewQaSection = document.getElementById(
-        "interview-qa-section"
-      );
+      const interviewQaSection = document.getElementById("interview-qa-section");
       const interviewQuestion = document.getElementById("interview-question");
       const interviewAnswer = document.getElementById("interview-answer");
-
-      // === START: All Editor Interaction Logic ===
 
       let isCppPlaceholderVisible = true;
       const cppEditorContainer = document.getElementById('cpp-editor-container');
 
-      // Add a 'focus' listener to the code element itself
       cppInput.addEventListener('focus', () => {
-          // When focused, add the highlight class to the container
           cppEditorContainer.classList.add('editor-container-focused');
-
-          // Also, clear the placeholder text on the very first focus
           if (isCppPlaceholderVisible) {
               cppInput.textContent = ''; 
               isCppPlaceholderVisible = false; 
           }
       });
 
-      // Add a 'blur' listener to the code element
       cppInput.addEventListener('blur', () => {
-          // When focus is lost, remove the highlight class
           cppEditorContainer.classList.remove('editor-container-focused');
       });
 
-      // Keep this listener to allow focusing by clicking the container's padding
       cppEditorContainer.addEventListener('click', (event) => {
-          // If the click is on the container but not the code itself, focus the code
-          if (event.target === cppEditorContainer) {
+          if (event.target !== cppInput) {
               cppInput.focus();
           }
       });
 
-      // Intercept paste to remove formatting AND re-highlight
       cppInput.addEventListener('paste', (event) => {
           event.preventDefault();
           const text = (event.clipboardData || window.clipboardData).getData('text/plain');
@@ -282,17 +178,12 @@ int main() {
           }, 1);
       });
 
-      // === END: All Editor Interaction Logic ===
-
-
       convertButton.addEventListener("click", handleConversion);
       copyButton.addEventListener("click", handleCopy);
 
-      
-
       async function handleConversion() {
         const cppCode = cppInput.textContent.trim();
-        if (!cppCode) {
+        if (!cppCode || isCppPlaceholderVisible) {
           showMessage("Please enter some C++ code first.", "error");
           return;
         }
@@ -302,7 +193,6 @@ int main() {
         jsOutput.removeAttribute("data-highlighted");
         jsOutput.className = "language-javascript";
         hljs.highlightElement(jsOutput);
-
         interviewQaSection.classList.add("hidden");
 
         try {
@@ -314,74 +204,39 @@ int main() {
 
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(
-              errorData.message || `Server error: ${response.status}`
-            );
+            throw new Error(errorData.message || `Server error: ${response.status}`);
           }
 
           const parsedData = await response.json();
-
-          // Set new code and re-highlight
           jsOutput.textContent = parsedData.javascriptCode.trim();
-          jsOutput.removeAttribute("dataset.highlighted");
+          jsOutput.removeAttribute("data-highlighted");
           jsOutput.className = "language-javascript";
           hljs.highlightElement(jsOutput);
-
-          interviewQuestion.innerHTML = marked.parse(
-            parsedData.interviewQuestion
-          );
+          interviewQuestion.innerHTML = marked.parse(parsedData.interviewQuestion);
           interviewAnswer.innerHTML = marked.parse(parsedData.interviewAnswer);
-
           interviewQaSection.classList.remove("hidden");
-          interviewQaSection
-            .querySelectorAll("pre code")
-            .forEach(hljs.highlightElement);
+          interviewQaSection.querySelectorAll("pre code").forEach(hljs.highlightElement);
         } catch (error) {
           console.error("Conversion Error:", error);
-          const errorMessage = `Error: ${error.message}`;
-          jsOutput.textContent = errorMessage;
+          jsOutput.textContent = `Error: ${error.message}`;
           jsOutput.className = "language-text";
           hljs.highlightElement(jsOutput);
-          showMessage(
-            "Conversion failed. Check browser console for details.",
-            "error"
-          );
+          showMessage("Conversion failed. Check browser console for details.", "error");
         } finally {
           setLoading(false);
         }
       }
 
-      function handleCopy() {
-        const codeToCopy = jsOutput.textContent;
-        if (!codeToCopy || codeToCopy.startsWith("//")) {
-          showMessage("Nothing to copy yet!", "error");
-          return;
-        }
-        navigator.clipboard
-          .writeText(codeToCopy)
-          .then(() => {
-            showMessage("Code copied to clipboard!", "success");
-          })
-          .catch((err) => {
-            console.error("Copy failed:", err);
-            showMessage("Could not copy text.", "error");
-          });
-      }
-
       function setLoading(isLoading) {
         convertButton.disabled = isLoading;
-        convertButton
-          .querySelector("svg")
-          .classList.toggle("hidden", isLoading);
+        convertButton.querySelector("svg").classList.toggle("hidden", isLoading);
         buttonText.classList.toggle("hidden", isLoading);
         loader.classList.toggle("hidden", !isLoading);
       }
 
       function showMessage(text, type = "success") {
         messageBox.textContent = text;
-        messageBox.className = `mt-6 text-center text-sm font-medium ${
-          type === "success" ? "text-green-400" : "text-red-400"
-        }`;
+        messageBox.className = `mt-6 text-center text-sm font-medium ${type === "success" ? "text-green-400" : "text-red-400"}`;
         messageBox.classList.remove("hidden");
         setTimeout(() => messageBox.classList.add("hidden"), 3000);
       }

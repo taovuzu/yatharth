@@ -1,38 +1,27 @@
 // Located at: /netlify/functions/server.js
 
-// Import necessary packages
 import express from 'express';
 import serverless from 'serverless-http';
-// **FIX:** Changed the import to a require statement for node-fetch v2
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
-// --- Main App Logic ---
 const app = express();
-const router = express.Router(); // Use an Express router
-
-// Get the Gemini API Key from Netlify's environment variables
+const router = express.Router();
 const { GEMINI_API_KEY } = process.env;
 
-// Middleware to parse incoming JSON from the frontend
 app.use(express.json());
 
-// --- API Route ---
-// This is the endpoint the frontend will call: /api/convert
 router.post('/convert', async (req, res) => {
-    // Check if the API key is configured on the server
     if (!GEMINI_API_KEY) {
         console.error('GEMINI_API_KEY is not configured on the server.');
         return res.status(500).json({ message: 'Server configuration error: API key is missing.' });
     }
 
     try {
-        // Get the C++ code from the request body
         const { cppCode } = req.body;
         if (!cppCode) {
             return res.status(400).json({ message: 'No C++ code was provided in the request.' });
         }
 
-        // --- Gemini API Call Logic (from your provided code) ---
         const prompt = `As an expert JavaScript educator dedicated to making users proficient for technical interviews, perform the following tasks:
 
 1.  Translate the C++ code below into modern, idiomatic ES6+ JavaScript. The translated code MUST NOT contain any comments.
@@ -79,19 +68,13 @@ ${cppCode}
             throw new Error('Received an invalid or empty response from the Gemini API.');
         }
 
-        // Send the successful response back to the frontend
         res.status(200).json(JSON.parse(responseText));
 
     } catch (error) {
-        // This catch block ensures the server doesn't crash
         console.error('Error in /api/convert endpoint:', error);
         res.status(500).json({ message: 'An internal server error occurred during conversion.' });
     }
 });
 
-// --- Netlify Configuration ---
-// Mount the router on the path Netlify uses for functions
 app.use('/.netlify/functions/server', router);
-
-// Export the handler for Netlify to use
 export const handler = serverless(app);

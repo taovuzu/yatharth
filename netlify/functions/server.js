@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 
 // --- Main App Logic ---
 const app = express();
+// Create a router that will handle all requests to /api
 const router = express.Router();
 
 const { GEMINI_API_KEY } = process.env;
@@ -13,7 +14,8 @@ const { GEMINI_API_KEY } = process.env;
 app.use(express.json());
 
 // --- API Route ---
-// This route will now correctly be available at /api/convert
+// This route now correctly listens for POST requests to the path /convert
+// The full path will be /api/convert because of how the router is mounted below.
 router.post('/convert', async (req, res) => {
     if (!GEMINI_API_KEY) {
         console.error('GEMINI_API_KEY is not configured on the server.');
@@ -81,8 +83,9 @@ ${cppCode}
 });
 
 // --- Netlify Configuration ---
-// **FIX:** The router is now mounted on the full path that the redirect points to.
-app.use('/.netlify/functions/server/api', router);
+// **FIX:** Mount the router on the /api path. The serverless-http wrapper
+// and netlify.toml will handle the rest of the routing.
+app.use('/api', router);
 
 // Export the handler for Netlify to use
 export const handler = serverless(app);

@@ -1,18 +1,21 @@
 # This file should be in the root of your project folder.
 
 [build]
-  # This is the directory that contains our frontend file (index.html).
+  # This tells Netlify where to find your serverless function.
+  functions = "netlify/functions"
+  
+  # This tells Netlify which folder contains your frontend files (e.g., index.html).
   publish = "public"
 
-# This section tells Netlify how to build your function.
-[functions]
-  # This ensures that Netlify installs the dependencies listed
-  # in your function's own package.json file.
-  node_bundler = "esbuild"
-  directory = "netlify/functions"
-
-# This rule makes our backend function available at a clean URL.
+# This rule makes your backend function available at a clean and simple URL.
 [[redirects]]
+  # When the frontend calls any path starting with "/api/",
   from = "/api/*"
-  to = "/.netlify/functions/server/api/:splat"
+  
+  # Netlify will internally forward that request to the actual serverless function.
+  # The ":splat" is a placeholder for whatever comes after "/api/".
+  # **FIX:** The "/api" part has been removed from the "to" path.
+  to = "/.netlify/functions/server/:splat"
+  
+  # The HTTP status code for this internal rewrite. 200 means it's not a redirect.
   status = 200

@@ -1,0 +1,11 @@
+{
+  "name": "yatharth-server-function",
+  "version": "1.0.0",
+  "description": "Dependencies for the Netlify server function.",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.19.2",
+    "serverless-http": "^3.2.0",
+    "node-fetch": "^2.7.0"
+  }
+}

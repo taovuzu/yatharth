@@ -3,7 +3,8 @@
 // Import necessary packages
 import express from 'express';
 import serverless from 'serverless-http';
-import fetch from 'node-fetch';
+// **FIX:** Changed the import to a require statement for node-fetch v2
+const fetch = require('node-fetch');
 
 // --- Main App Logic ---
 const app = express();

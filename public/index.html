@@ -323,7 +323,7 @@ int main() {
 
           // Set new code and re-highlight
           jsOutput.textContent = parsedData.javascriptCode.trim();
-          jsOutput.removeAttribute("data-highlighted");
+          jsOutput.removeAttribute("dataset.highlighted");
           jsOutput.className = "language-javascript";
           hljs.highlightElement(jsOutput);
 

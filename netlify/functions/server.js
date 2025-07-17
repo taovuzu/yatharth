@@ -131,7 +131,7 @@ router.post('/convert', async (req, res) => {
         ];
 
         const randomIndex = Math.floor(Math.random() * interviewTopics.length);
-        const topicIndex = interviewTopics[randomIndex];
+        const topic = interviewTopics[randomIndex];
 
 //         const prompt = `As an expert JavaScript educator dedicated to making users proficient for technical interviews, perform the following tasks:
 
